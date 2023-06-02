@@ -4,10 +4,12 @@ import './main.sass'
 
 // Получаем все DOM элементы
 const player = new Audio()
+
 const btnPlay = document.querySelector('#play')
 const btnPause = document.querySelector('#pause')
 const btnPrevTrack = document.querySelector('#prevTrack')
 const btnNextTrack = document.querySelector('#nextTrack')
+const inputVolumeTrack = document.querySelector('#volumeTrack')
 
 // Создаём data
 const data = {
@@ -28,7 +30,7 @@ class Itunes {
   constructor(data) {
     this.data = data
     this.playing = 0
-    this.volume
+    this.volume = 0.8
     this.time
   }
 
@@ -42,22 +44,34 @@ class Itunes {
   }
 
   switchTrack(id) {
-    if (player.paused) {
-      console.log('Переключаемся и играем дальше')
+    if (!player.paused) {
       this.playTrack(id)
     } else {
-      console.log('Переключаемся и не играем')
       this.pauseTrack()
     }
-    console.log('itunes.GetPlayingTrack in switchTrack:', this.PlayingTrack)
-    console.log(player)
+    console.log('itunes.GetplayingTrack in switchTrack:', this.playingTrack)
+    console.log(player.src)
   }
 
-  get PlayingTrack() {
+  get playingTrack() {
     return this.playing
   }
-  set PlayingTrack(id) {
+  set playingTrack(id) {
+    this.switchTrack(this.playingTrack)
     return (this.playing = id)
+  }
+
+  switchVolume(value) {
+    player.volume = value
+    console.log('player.volume:', player.volume)
+  }
+
+  get volumeTrack() {
+    return this.volume
+  }
+  set volumeTrack(value) {
+    this.switchVolume(value / 100)
+    return (this.volume = value)
   }
 }
 
@@ -66,7 +80,7 @@ const itunes = new Itunes(data)
 
 // Создаём методы для работы с инстансом класса Itunes
 btnPlay.addEventListener('click', function () {
-  itunes.playTrack(0)
+  itunes.playTrack(itunes.playingTrack)
 })
 
 btnPause.addEventListener('click', function () {
@@ -74,13 +88,15 @@ btnPause.addEventListener('click', function () {
 })
 
 btnPrevTrack.addEventListener('click', function () {
-  itunes.PlayingTrack = itunes.PlayingTrack - 1
-  itunes.switchTrack(itunes.PlayingTrack)
-  console.log(itunes.PlayingTrack)
+  itunes.playingTrack = itunes.playingTrack - 1
+  console.log(itunes.playingTrack)
 })
 
 btnNextTrack.addEventListener('click', function () {
-  itunes.PlayingTrack = itunes.PlayingTrack + 1
-  itunes.switchTrack(itunes.PlayingTrack)
-  console.log(itunes.PlayingTrack)
+  itunes.playingTrack = itunes.playingTrack + 1
+  console.log(itunes.playingTrack)
+})
+
+inputVolumeTrack.addEventListener('input', function (e) {
+  itunes.volumeTrack = e.target.value
 })
