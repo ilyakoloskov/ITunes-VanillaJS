@@ -32,9 +32,9 @@ class Itunes {
   constructor(data, player) {
     this.data = data
     this.playing = 0
-    this.volume = 0.8
-    this.currentTrack = 0
     this.player = player
+    this.player.volume = 0.8
+    this.player.currentTime = 0
   }
 
   playTrack(id) {
@@ -42,9 +42,10 @@ class Itunes {
     this.player.currentTime = this.currentTimeTrack
     this.player.play()
     console.log('this.playingTrack', this.playingTrack)
-    console.log('this.playing', this.playing)
+    console.log('Playing:', this.playing)
     this.updateCurrentTimeTrack()
     console.log(this.player)
+    console.log('This volume track', this.player.volume)
   }
 
   pauseTrack() {
@@ -66,24 +67,19 @@ class Itunes {
     return (this.playing = id)
   }
 
-  switchVolume(value) {
-    this.player.volume = value
-    console.log('player.volume:', this.player.volume)
-  }
-
   get volumeTrack() {
-    return this.volume
+    return this.player.volume
   }
   set volumeTrack(value) {
-    this.switchVolume(value / 100)
-    return (this.volume = value)
+    console.log('Volume:', this.player.volume)
+    return (this.player.volume = value / 100)
   }
 
   get currentTimeTrack() {
-    return this.currentTrack
+    return this.player.currentTime
   }
   set currentTimeTrack(value) {
-    return (this.currentTrack = value)
+    return (this.player.currentTime = value)
   }
 
   updateCurrentTimeTrack() {
@@ -93,7 +89,6 @@ class Itunes {
       let seconds = Math.floor(this.player.currentTime % 60)
       seconds = seconds >= 10 ? seconds : '0' + seconds
 
-      this.currentTimeTrack = this.player.currentTime
       console.log(this.currentTimeTrack, minutes + ':' + seconds)
       divCurrentTime.innerHTML = minutes + ':' + seconds
     }, 1000)
