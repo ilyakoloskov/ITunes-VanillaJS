@@ -49,7 +49,7 @@ class Itunes {
 
   pauseTrack() {
     this.player.pause()
-    console.log(player.currentTime)
+    console.log(this.player.currentTime)
   }
 
   switchTrack(id) {
@@ -68,7 +68,7 @@ class Itunes {
 
   switchVolume(value) {
     this.player.volume = value
-    console.log('player.volume:', player.volume)
+    console.log('player.volume:', this.player.volume)
   }
 
   get volumeTrack() {
