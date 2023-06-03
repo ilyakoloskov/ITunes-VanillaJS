@@ -1,4 +1,5 @@
 import './main.sass'
+// Console
 // Сделать local storage
 // Стилизовать
 
@@ -10,6 +11,8 @@ const btnPrevTrack = document.querySelector('#prevTrack')
 const btnNextTrack = document.querySelector('#nextTrack')
 const inputVolumeTrack = document.querySelector('#volumeTrack')
 const divCurrentTime = document.querySelector('#currentTime')
+
+const inputCurrentTime = document.querySelector('#inputCurrentTime')
 
 // Создаём data
 const data = {
@@ -26,6 +29,7 @@ const data = {
 }
 
 const playerInst = new Audio()
+playerInst.preload = 'metadata'
 
 // Создаём класс Itunes
 class Itunes {
@@ -35,28 +39,28 @@ class Itunes {
     this.player = player
     this.player.volume = 0.8
     this.player.currentTime = 0
+    this.isPlaying = false
+    this.playerInterval = null
   }
 
   playTrack(id) {
     this.player.src = this.data.albums[id].trackPath
-    this.player.currentTime = this.currentTimeTrack
     this.player.play()
-    console.log('this.playingTrack', this.playingTrack)
-    console.log('Playing:', this.playing)
-    this.updateCurrentTimeTrack()
-    console.log(this.player)
-    console.log('This volume track', this.player.volume)
+
+    this.currentTimeTrack = this.updateCurrentTimeTrack()
+    console.log('Player', this.player)
   }
 
   pauseTrack() {
     this.player.pause()
-    console.log(this.player.currentTime)
+    console.log('this.playerInterval', this.playerInterval)
+    clearInterval(this.playerInterval)
   }
 
   switchTrack(id) {
-    this.playTrack(id)
-    console.log('itunes.GetplayingTrack in switchTrack:', this.playingTrack)
-    console.log(this.player.src)
+    this.playingTrack = id
+    this.playTrack(this.playingTrack)
+    this.currentTimeTrack = 0
   }
 
   get playingTrack() {
@@ -79,19 +83,34 @@ class Itunes {
     return this.player.currentTime
   }
   set currentTimeTrack(value) {
+    // setInterval(() => {
+    //   let minutes = Math.floor(this.player.currentTime / 60)
+    //   minutes = minutes >= 10 ? minutes : '0' + minutes
+    //   let seconds = Math.floor(this.player.currentTime % 60)
+    //   seconds = seconds >= 10 ? seconds : '0' + seconds
+
+    //   console.log(this.currentTimeTrack, minutes + ':' + seconds)
+    //   divCurrentTime.innerHTML = minutes + ':' + seconds
+    //   inputCurrentTime.value = itunes.currentTimeTrack
+    // }, 1000)
     return (this.player.currentTime = value)
   }
 
   updateCurrentTimeTrack() {
-    setInterval(() => {
+    this.player.addEventListener('loadeddata', function () {
+      inputCurrentTime.max = this.duration
+    })
+    this.playerInterval = setInterval(() => {
       let minutes = Math.floor(this.player.currentTime / 60)
       minutes = minutes >= 10 ? minutes : '0' + minutes
       let seconds = Math.floor(this.player.currentTime % 60)
       seconds = seconds >= 10 ? seconds : '0' + seconds
-
       console.log(this.currentTimeTrack, minutes + ':' + seconds)
       divCurrentTime.innerHTML = minutes + ':' + seconds
+      inputCurrentTime.value = itunes.currentTimeTrack
     }, 1000)
+
+    return (this.currentTimeTrack = inputCurrentTime.value)
   }
 }
 
@@ -108,15 +127,11 @@ btnPause.addEventListener('click', function () {
 })
 
 btnPrevTrack.addEventListener('click', function () {
-  itunes.playingTrack = itunes.playingTrack - 1
-  itunes.currentTimeTrack = 0
-  itunes.switchTrack(itunes.playingTrack)
+  itunes.switchTrack(itunes.playingTrack - 1)
 })
 
 btnNextTrack.addEventListener('click', function () {
-  itunes.playingTrack = itunes.playingTrack + 1
-  itunes.currentTimeTrack = 0
-  itunes.switchTrack(itunes.playingTrack)
+  itunes.switchTrack(itunes.playingTrack + 1)
 })
 
 inputVolumeTrack.addEventListener('input', function (e) {
