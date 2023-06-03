@@ -3,13 +3,13 @@ import './main.sass'
 // Стилизовать
 
 // Получаем все DOM элементы
-const player = new Audio()
 
 const btnPlay = document.querySelector('#play')
 const btnPause = document.querySelector('#pause')
 const btnPrevTrack = document.querySelector('#prevTrack')
 const btnNextTrack = document.querySelector('#nextTrack')
 const inputVolumeTrack = document.querySelector('#volumeTrack')
+const divCurrentTime = document.querySelector('#currentTime')
 
 // Создаём data
 const data = {
@@ -19,50 +19,55 @@ const data = {
       id: 0,
     },
     {
-      trackPath: require('./assets/music/defMusic.mp3'),
+      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
       id: 1,
     },
   ],
 }
 
+const playerInst = new Audio()
+
 // Создаём класс Itunes
 class Itunes {
-  constructor(data) {
+  constructor(data, player) {
     this.data = data
     this.playing = 0
     this.volume = 0.8
-    this.time
+    this.currentTrack = 0
+    this.player = player
   }
 
   playTrack(id) {
-    player.src = this.data.albums[id].trackPath
-    player.play()
+    this.player.src = this.data.albums[id].trackPath
+    this.player.currentTime = this.currentTimeTrack
+    this.player.play()
+    console.log('this.playingTrack', this.playingTrack)
+    console.log('this.playing', this.playing)
+    this.updateCurrentTimeTrack()
+    console.log(this.player)
   }
 
   pauseTrack() {
-    player.pause()
+    this.player.pause()
+    console.log(player.currentTime)
   }
 
   switchTrack(id) {
-    if (!player.paused) {
-      this.playTrack(id)
-    } else {
-      this.pauseTrack()
-    }
+    this.playTrack(id)
     console.log('itunes.GetplayingTrack in switchTrack:', this.playingTrack)
-    console.log(player.src)
+    console.log(this.player.src)
   }
 
   get playingTrack() {
     return this.playing
   }
   set playingTrack(id) {
-    this.switchTrack(this.playingTrack)
+    console.log('switch track id:', id)
     return (this.playing = id)
   }
 
   switchVolume(value) {
-    player.volume = value
+    this.player.volume = value
     console.log('player.volume:', player.volume)
   }
 
@@ -73,12 +78,32 @@ class Itunes {
     this.switchVolume(value / 100)
     return (this.volume = value)
   }
+
+  get currentTimeTrack() {
+    return this.currentTrack
+  }
+  set currentTimeTrack(value) {
+    return (this.currentTrack = value)
+  }
+
+  updateCurrentTimeTrack() {
+    setInterval(() => {
+      let minutes = Math.floor(this.player.currentTime / 60)
+      minutes = minutes >= 10 ? minutes : '0' + minutes
+      let seconds = Math.floor(this.player.currentTime % 60)
+      seconds = seconds >= 10 ? seconds : '0' + seconds
+
+      this.currentTimeTrack = this.player.currentTime
+      console.log(this.currentTimeTrack, minutes + ':' + seconds)
+      divCurrentTime.innerHTML = minutes + ':' + seconds
+    }, 1000)
+  }
 }
 
 // Создаём инстанс класса Itunes
-const itunes = new Itunes(data)
+const itunes = new Itunes(data, playerInst)
 
-// Создаём методы для работы с инстансом класса Itunes
+// методы для работы с инстансом класса Itunes
 btnPlay.addEventListener('click', function () {
   itunes.playTrack(itunes.playingTrack)
 })
@@ -89,12 +114,14 @@ btnPause.addEventListener('click', function () {
 
 btnPrevTrack.addEventListener('click', function () {
   itunes.playingTrack = itunes.playingTrack - 1
-  console.log(itunes.playingTrack)
+  itunes.currentTimeTrack = 0
+  itunes.switchTrack(itunes.playingTrack)
 })
 
 btnNextTrack.addEventListener('click', function () {
   itunes.playingTrack = itunes.playingTrack + 1
-  console.log(itunes.playingTrack)
+  itunes.currentTimeTrack = 0
+  itunes.switchTrack(itunes.playingTrack)
 })
 
 inputVolumeTrack.addEventListener('input', function (e) {
