@@ -2,6 +2,7 @@ import './main.sass'
 // Console
 // Сделать local storage
 // Стилизовать
+// Сделать clearInterval
 
 // Получаем все DOM элементы
 
@@ -10,9 +11,11 @@ const btnPause = document.querySelector('#pause')
 const btnPrevTrack = document.querySelector('#prevTrack')
 const btnNextTrack = document.querySelector('#nextTrack')
 const inputVolumeTrack = document.querySelector('#volumeTrack')
+const inputCurrentTime = document.querySelector('#inputCurrentTime')
 const divCurrentTime = document.querySelector('#currentTime')
 
-const inputCurrentTime = document.querySelector('#inputCurrentTime')
+// ALBUMS
+const sectionAlbums = document.querySelector('#albums')
 
 // Создаём data
 const data = {
@@ -25,8 +28,25 @@ const data = {
       trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
       id: 1,
     },
+    {
+      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
+      id: 2,
+    },
+    {
+      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
+      id: 3,
+    },
+    {
+      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
+      id: 4,
+    },
   ],
 }
+
+let albums = data.albums.map((el) => {
+  let albumTrackPath = el.trackPath
+  sectionAlbums.appendChild(document.createElement('div')).classList.add('album')
+})
 
 const playerInst = new Audio()
 playerInst.preload = 'metadata'
