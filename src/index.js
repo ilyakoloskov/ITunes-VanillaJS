@@ -4,7 +4,7 @@ import './main.sass'
 // Setting output duration track
 // Finish value
 
-// Создаём data
+// Create local data storage
 const data = {
   albums: [
     {
