@@ -4,22 +4,15 @@ import './main.sass'
 // Стилизовать
 // Сделать clearInterval
 // Сделать вывод продолжительности трека
-
-// Получаем все DOM элементы
-
-const inputVolumeTrack = document.querySelector('#volumeTrack')
-const inputCurrentTime = document.querySelector('#inputCurrentTime')
-const divCurrentTime = document.querySelector('#currentTime')
-
-// ALBUMS
-// const sectionAlbums = document.querySelector('#albums')
+// Доделать громкость
 
 // Создаём data
 const data = {
   albums: [
     {
       artist: 'Organic Audio',
-      albumName: 'asdsad',
+      albumName: 'Album name value',
+      cover: require('./assets/albums/Organic Audio/cover.png'),
       trackPath: {
         Nurega: require('./assets/albums/Organic Audio/Organic Audio - Nurega.mp3'),
         NuregaTwo: require('./assets/albums/Rozz/rozz.mp3'),
@@ -36,9 +29,6 @@ const data = {
   ],
 }
 
-// console.log(Object.keys(data.albums[0].trackPath[0]))
-
-// console.log(data.albums[0].trackPath.a)
 // let albums = data.albums.map((el) => {
 //   let albumTrackPath = el.trackPath
 //   sectionAlbums.appendChild(document.createElement('div')).classList.add('album')
@@ -60,9 +50,9 @@ class Itunes {
     this.isPlaying = false
     this.playerInterval = null
 
-    this.playing = 0
     this.albumId = 0
     this.trackId = 0
+    this.durationTime = 0
 
     // Btns
     this.events = events
@@ -80,10 +70,23 @@ class Itunes {
     this.prevTrack = this.events.btnPrevTrack.addEventListener('click', () => {
       this.funcPrevTrack()
     })
+
+    this.durationTime = this.player.addEventListener('loadeddata', function () {
+      console.log(this.duration)
+      inputCurrentTime.max = this.duration
+      this.durationTime = this.duration
+      events.durationTime.innerHTML = this.durationTime
+      console.log(this.durationTime)
+      // console.log(inputCurrentTime.max)
+    })
   }
 
   funcPlayTrack(albumId, trackId) {
     let trackPath = Object.values(data.albums[albumId].trackPath)
+    let coverPath = data.albums[albumId].cover
+    console.log(coverPath)
+    this.events.trackCover.src = `${coverPath}`
+    console.log(this.events.trackCover)
     this.player.src = trackPath[trackId]
     clearInterval(this.playerInterval)
     this.player.play()
@@ -130,15 +133,12 @@ class Itunes {
   }
 
   updateCurrentTimeTrack() {
-    this.player.addEventListener('loadeddata', function () {
-      inputCurrentTime.max = this.duration
-    })
     this.playerInterval = setInterval(() => {
       let minutes = Math.floor(this.player.currentTime / 60)
       minutes = minutes >= 10 ? minutes : '0' + minutes
       let seconds = Math.floor(this.player.currentTime % 60)
       seconds = seconds >= 10 ? seconds : '0' + seconds
-      divCurrentTime.innerHTML = minutes + ':' + seconds
+      this.events.currentTime.innerHTML = minutes + ':' + seconds
       inputCurrentTime.value = this.player.currentTime
       let porgressProcent = () => {
         let result = (inputCurrentTime.value / this.player.duration) * 100
@@ -156,7 +156,12 @@ const itunes = new Itunes(data, playerInst, {
   btnPlayTrack: document.querySelector('#playTrack'),
   btnNextTrack: document.querySelector('#nextTrack'),
   btnPrevTrack: document.querySelector('#prevTrack'),
+  currentTime: document.querySelector('#currentTime'),
+  durationTime: document.querySelector('#duratuionTime'),
+  trackCover: document.querySelector('#trackCoverImg'),
 })
+
+const inputVolumeTrack = document.querySelector('#volumeTrack')
 
 inputVolumeTrack.addEventListener('input', function (e) {
   itunes.volumeTrack = e.target.value

@@ -70,19 +70,21 @@
               </svg>
             </button>
           </div>
-          <input type="range" class="input input-volumes range" id="volumeTrack" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="80"
+            step="1"
+            class="input input-volumes range"
+            id="volumeTrack"
+          />
         </div>
 
         <!-- HEADER-TRACK -->
         <div class="header__track bg-secondary header-inner">
           <div class="header__track-track">
-            <div
-              id="track-cover"
-              class="header__track-img"
-              style="background-image: url('./assets/covers/darkSideOfTheClouds.png')"
-            >
-              <img class="header__track-img" src="./assets/covers/darkSideOfTheClouds.png" alt="" />
-            </div>
+            <img id="trackCoverImg" class="header__track-img" alt="" />
             <div class="header__track-wrap">
               <div class="header__track-container">
                 <div class="header__track-inner">
@@ -133,7 +135,7 @@
                   <h3 id="track-name" class="header__track-name color-alternate display-5">
                     Zavali Ebalo
                   </h3>
-                  <span id="track-time-end" class="header__track-time"> 0:00 </span>
+                  <span id="duratuionTime" class="header__track-time"> 0:00 </span>
                 </div>
               </div>
               <div class="header__progress">
