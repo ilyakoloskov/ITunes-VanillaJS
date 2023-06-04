@@ -25,7 +25,7 @@
         <!-- HEADER-SETTINGS -->
         <div class="header__settings header-inner player">
           <div class="header__player">
-            <button id="prevTrack" type="button">
+            <button id="prevTrack" class="header__player-btn btn" type="button">
               <svg
                 width="28"
                 height="28"
@@ -39,7 +39,7 @@
                 />
               </svg>
             </button>
-            <button id="playTrack" type="button">
+            <button id="playTrack" class="header__player-btn btn" type="button">
               <svg
                 class="icon-play"
                 width="48"
@@ -54,7 +54,7 @@
                 />
               </svg>
             </button>
-            <button id="nextTrack" type="button">
+            <button id="nextTrack" class="header__player-btn btn" type="button">
               <svg
                 v-if="type == 'next'"
                 width="28"
@@ -129,11 +129,11 @@
                   </button>
                 </div>
                 <div class="header__track-inner display-4">
-                  <span id="currentTime" class="header__track-time"> 00:00 </span>
+                  <span id="currentTime" class="header__track-time"> 0:00 </span>
                   <h3 id="track-name" class="header__track-name color-alternate display-5">
                     Zavali Ebalo
                   </h3>
-                  <span id="track-time-end" class="header__track-time"> 00:00 </span>
+                  <span id="track-time-end" class="header__track-time"> 0:00 </span>
                 </div>
               </div>
               <div class="header__progress">

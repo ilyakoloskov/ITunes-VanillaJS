@@ -3,46 +3,42 @@ import './main.sass'
 // Сделать local storage
 // Стилизовать
 // Сделать clearInterval
+// Сделать вывод продолжительности трека
 
 // Получаем все DOM элементы
 
-// const btnPause = document.querySelector('#pause')
-const btnPlay = document.querySelector('#playTrack')
-const btnPrevTrack = document.querySelector('#prevTrack')
-const btnNextTrack = document.querySelector('#nextTrack')
 const inputVolumeTrack = document.querySelector('#volumeTrack')
 const inputCurrentTime = document.querySelector('#inputCurrentTime')
 const divCurrentTime = document.querySelector('#currentTime')
 
 // ALBUMS
-const sectionAlbums = document.querySelector('#albums')
+// const sectionAlbums = document.querySelector('#albums')
 
 // Создаём data
 const data = {
   albums: [
     {
-      trackPath: require('./assets/music/rozz.mp3'),
+      artist: 'Organic Audio',
+      albumName: 'asdsad',
+      trackPath: {
+        Nurega: require('./assets/albums/Organic Audio/Organic Audio - Nurega.mp3'),
+        NuregaTwo: require('./assets/albums/Rozz/rozz.mp3'),
+        NuregaThree: require('./assets/albums/Organic Audio/Organic Audio - Nurega.mp3'),
+      },
+      //  require('./assets/albums/Organic Audio/Organic Audio - Nurega.mp3'),
       id: 0,
     },
     {
-      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
+      albumName: 'Rozz Dyliams',
+      trackPath: require('./assets/albums/Rozz/rozz.mp3'),
       id: 1,
-    },
-    {
-      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
-      id: 2,
-    },
-    {
-      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
-      id: 3,
-    },
-    {
-      trackPath: require('./assets/music/Organic Audio - Nurega.mp3'),
-      id: 4,
     },
   ],
 }
 
+// console.log(Object.keys(data.albums[0].trackPath[0]))
+
+// console.log(data.albums[0].trackPath.a)
 // let albums = data.albums.map((el) => {
 //   let albumTrackPath = el.trackPath
 //   sectionAlbums.appendChild(document.createElement('div')).classList.add('album')
@@ -53,40 +49,69 @@ playerInst.preload = 'metadata'
 
 // Создаём класс Itunes
 class Itunes {
-  constructor(data, player) {
+  constructor(data, player, { ...events }) {
+    // Storage
     this.data = data
-    this.playing = 0
+
+    // Player
     this.player = player
     this.player.volume = 0.8
     this.player.currentTime = 0
     this.isPlaying = false
     this.playerInterval = null
+
+    this.playing = 0
+    this.albumId = 0
+    this.trackId = 0
+
+    // Btns
+    this.events = events
+
+    // Events
+    // Play Track
+    this.playTrack = this.events.btnPlayTrack.addEventListener('click', () => {
+      this.funcPlayTrack(this.albumId, this.trackId)
+    })
+
+    this.nextTrack = this.events.btnNextTrack.addEventListener('click', () => {
+      this.funcNextTrack()
+    })
+
+    this.prevTrack = this.events.btnPrevTrack.addEventListener('click', () => {
+      this.funcPrevTrack()
+    })
   }
 
-  playTrack(id) {
-    this.player.src = this.data.albums[id].trackPath
+  funcPlayTrack(albumId, trackId) {
+    let trackPath = Object.values(data.albums[albumId].trackPath)
+    this.player.src = trackPath[trackId]
     clearInterval(this.playerInterval)
     this.player.play()
     this.currentTimeTrack = this.updateCurrentTimeTrack()
-    console.log('Player', this.player)
   }
 
-  pauseTrack() {
+  funcNextTrack() {
+    this.playingtrackId = this.playingtrackId + 1
+    this.funcPlayTrack(this.albumId, this.playingtrackId)
+    this.currentTimeTrack = 0
+  }
+
+  funcPrevTrack() {
+    this.playingtrackId = this.playingtrackId - 1
+    this.funcPlayTrack(this.albumId, this.playingtrackId)
+    this.currentTimeTrack = 0
+  }
+
+  funcPauseTrack() {
     this.player.pause()
     clearInterval(this.playerInterval)
   }
 
-  switchTrack(id) {
-    this.playingTrack = id
-    this.playTrack(this.playingTrack)
-    this.currentTimeTrack = 0
+  get playingtrackId() {
+    return this.trackId
   }
-
-  get playingTrack() {
-    return this.playing
-  }
-  set playingTrack(id) {
-    return (this.playing = id)
+  set playingtrackId(id) {
+    return (this.trackId = id)
   }
 
   get volumeTrack() {
@@ -113,7 +138,6 @@ class Itunes {
       minutes = minutes >= 10 ? minutes : '0' + minutes
       let seconds = Math.floor(this.player.currentTime % 60)
       seconds = seconds >= 10 ? seconds : '0' + seconds
-      console.log(this.currentTimeTrack, minutes + ':' + seconds)
       divCurrentTime.innerHTML = minutes + ':' + seconds
       inputCurrentTime.value = this.player.currentTime
       let porgressProcent = () => {
@@ -128,23 +152,10 @@ class Itunes {
 }
 
 // Создаём инстанс класса Itunes
-const itunes = new Itunes(data, playerInst)
-
-// методы для работы с инстансом класса Itunes
-btnPlay.addEventListener('click', function () {
-  itunes.playTrack(itunes.playingTrack)
-})
-
-// btnPause.addEventListener('click', function () {
-//   itunes.pauseTrack()
-// })
-
-btnPrevTrack.addEventListener('click', function () {
-  itunes.switchTrack(itunes.playingTrack - 1)
-})
-
-btnNextTrack.addEventListener('click', function () {
-  itunes.switchTrack(itunes.playingTrack + 1)
+const itunes = new Itunes(data, playerInst, {
+  btnPlayTrack: document.querySelector('#playTrack'),
+  btnNextTrack: document.querySelector('#nextTrack'),
+  btnPrevTrack: document.querySelector('#prevTrack'),
 })
 
 inputVolumeTrack.addEventListener('input', function (e) {
