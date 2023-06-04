@@ -1,10 +1,8 @@
 import './main.sass'
-// Console
-// Сделать local storage
-// Стилизовать
-// Сделать clearInterval
-// Сделать вывод продолжительности трека
-// Доделать громкость
+// add info иy using Console. :D
+// Create add value in local storage
+// Setting output duration track
+// Finish value
 
 // Создаём data
 const data = {
@@ -150,8 +148,7 @@ class Itunes {
     return (this.currentTimeTrack = inputCurrentTime.value)
   }
 }
-
-// Создаём инстанс класса Itunes
+// Create an itunes class instance
 const itunes = new Itunes(data, playerInst, {
   btnPlayTrack: document.querySelector('#playTrack'),
   btnNextTrack: document.querySelector('#nextTrack'),
